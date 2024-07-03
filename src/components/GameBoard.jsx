@@ -5,17 +5,14 @@ const initialBoard = [
   [null, null, null],
   [null, null, null],
 ];
-export default function GameBoard({ handleSelect, activePlayerSymbol }) {
-  const [gameBoard, setGameBoard] = useState(initialBoard);
+export default function GameBoard({ handleSelect, turns }) {
+  let gameBoard = initialBoard;
 
-  function handleGameBoard(rowIndex, colIndex) {
-    setGameBoard((previousGameBoard) => {
-      const gameBoard = [...previousGameBoard.map((board) => [...board])];
-      gameBoard[rowIndex][colIndex] = activePlayerSymbol;
-      return gameBoard;
-    });
+  for (const turn of turns) {
+    const { state, player } = turn;
+    const { row, col } = state;
 
-    handleSelect();
+    gameBoard[row][col] = player;
   }
 
   return (
@@ -25,7 +22,7 @@ export default function GameBoard({ handleSelect, activePlayerSymbol }) {
           <ol>
             {row.map((playerSymbol, colIndex) => (
               <li key={colIndex}>
-                <button onClick={() => handleGameBoard(rowIndex, colIndex)}>
+                <button onClick={() => handleSelect(rowIndex, colIndex)}>
                   {playerSymbol}
                 </button>
               </li>
