@@ -21,9 +21,12 @@ function deriveActivePlayer(gameTurns) {
 
 function App() {
   const [gameTurns, setGameTurns] = useState([]);
-
+  const [players, setPlayers] = useState({
+    X: "Player 1",
+    O: "Player 2",
+  });
   const activePlayer = deriveActivePlayer(gameTurns);
-  let gameBoard = initialBoard;
+  let gameBoard = [...initialBoard.map((innerArray) => [...innerArray])];
 
   for (const turn of gameTurns) {
     const { state, player } = turn;
@@ -46,7 +49,7 @@ function App() {
       firstSquareSelected === secondSquareSelected &&
       firstSquareSelected === thirdSquareSelected
     ) {
-      winner = firstSquareSelected;
+      winner = players[firstSquareSelected];
     }
   }
 
@@ -68,9 +71,15 @@ function App() {
     });
   }
 
-  // function handleRematch() {
-  //   setGameTurns([]);
-  // }
+  function handleRematch() {
+    setGameTurns([]);
+  }
+
+  function handlePlayerNameChange(symbol, player) {
+    setPlayers((previousPlayers) => {
+      return { ...previousPlayers, [symbol]: player };
+    });
+  }
 
   return (
     <main>
@@ -80,14 +89,18 @@ function App() {
             initialName="Player 1"
             symbol="X"
             isActive={activePlayer === "X"}
+            handleSave={handlePlayerNameChange}
           />
           <Player
             initialName="Player 2"
             symbol="O"
             isActive={activePlayer === "O"}
+            handleSave={handlePlayerNameChange}
           />
         </ol>
-        {(winner || hasDraw) && <GameOver winner={winner} />}
+        {(winner || hasDraw) && (
+          <GameOver winner={winner} rematch={handleRematch} />
+        )}
         <GameBoard handleSelect={handleSelectedSqaure} board={gameBoard} />
       </div>
       <Logs turns={gameTurns} />
