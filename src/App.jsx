@@ -3,6 +3,7 @@ import GameBoard from "./components/GameBoard";
 import Player from "./components/Player";
 import Logs from "./components/Logs";
 import { WINNING_COMBINATIONS } from "./winning-combinations";
+import GameOver from "./components/GameOver";
 
 const initialBoard = [
   [null, null, null],
@@ -49,6 +50,8 @@ function App() {
     }
   }
 
+  const hasDraw = gameTurns.length === 9 && !winner;
+
   function handleSelectedSqaure(rowIndex, colIndex) {
     setGameTurns((prevTurns) => {
       const currentlyActivePlayer = deriveActivePlayer(prevTurns);
@@ -65,6 +68,10 @@ function App() {
     });
   }
 
+  // function handleRematch() {
+  //   setGameTurns([]);
+  // }
+
   return (
     <main>
       <div id="game-container">
@@ -80,7 +87,7 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
-        {winner && <p>You won, {winner}</p>}
+        {(winner || hasDraw) && <GameOver winner={winner} />}
         <GameBoard handleSelect={handleSelectedSqaure} board={gameBoard} />
       </div>
       <Logs turns={gameTurns} />
